@@ -76,17 +76,24 @@ module.exports = function router (routesDir, config) {
     // if a route exposes a `priority` property, sort the route on it.
     .sort((a, b) => val(a.priority) < val(b.priority) ? 1 : -1)
 
+
   // generated match method - call with a req object to get a route.
   return function match (req) {
+    let root = (config && config.root) || ''
     let routeFn = r => r[req.method] || (typeof r === 'function' && r)
+
+    if (req.url.indexOf(root) !== 0) return
+
+    let url = req.url.replace(new RegExp('^' + root), '')
     let found = routes.find(r => {
-      let matched = r.match(req.url)
+      let matched = r.match(url)
       let hasFn = routeFn(r)
       if (matched && hasFn) {
         Object.assign(req, matched)
         return true
       }
     })
+
     if (found) return routeFn(found)
   }
 }

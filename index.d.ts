@@ -3,6 +3,7 @@ import { RequestHandler } from 'micro'
 
 interface fConfig {
     filter: (f: string) => boolean
+    root: string
 }
 
 declare function match(req: IncomingMessage): RequestHandler | void
